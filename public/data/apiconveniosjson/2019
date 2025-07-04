@@ -1,0 +1,62 @@
+[
+  {
+    "numero_convênio": "001/2019",
+    "processo": "5118/19",
+    "órgão": "SECULT",
+    "proponente": "FERQUAJ",
+    "objeto": "REALIZAÇÃO DO PROJETO 'AMOR DE QUADRILHEIROS NO SÃO JOÃO DO ANAUÁ, VAMOS TODOS FESTEJAR 2019'",
+    "vigência_inicial": "2019-07-19",
+    "vigência_final": "2019-09-19",
+    "valor_concedente": 255000,
+    "contrapartida_proponente": 5100,
+    "valor_total": 255000,
+    "valor_repassado": 0,
+    "saldo_a_repassar": 255000,
+    "situação": "PC em Análise"
+  },
+  {
+    "numero_convênio": "002/2019",
+    "processo": "5117/19",
+    "órgão": "SECULT",
+    "proponente": "Associação Folclórica Thianguá",
+    "objeto": "REALIZAÇÃO DO PROJETO 'ALEGRIA DE DANÇAR, NO FESTEJO DO ANAUÁ' NO 'SÃO JOÃO DO ANAUÁ, VAMOS TODOS FESTEJAR 2019'",
+    "vigência_inicial": "2019-07-19",
+    "vigência_final": "2019-09-19",
+    "valor_concedente": 45000,
+    "contrapartida_proponente": 900,
+    "valor_total": 45000,
+    "valor_repassado": 45000,
+    "saldo_a_repassar": 0,
+    "situação": "APROVADO"
+  },
+  {
+    "numero_convênio": "003/2019",
+    "processo": "8034/19",
+    "órgão": "SECULT",
+    "proponente": "ASSOCIAÇÃO FOLCLÓRICA DE CARACARAI - COBRA MARIANA",
+    "objeto": "X FESTIVAL FOLCLÓRICO DE CARACARAÍ",
+    "vigência_inicial": "2019-11-14",
+    "vigência_final": "2019-11-30",
+    "valor_concedente": 30000,
+    "contrapartida_proponente": 600,
+    "valor_total": 30000,
+    "valor_repassado": 0,
+    "saldo_a_repassar": 30000,
+    "situação": "PC em Análise"
+  },
+  {
+    "numero_convênio": "004/2019",
+    "processo": "8038/19",
+    "órgão": "SEPLAN",
+    "proponente": "ASSOSSIAÇÃO FOLCLÓRICA DE CARACARAI - GAVIÃO CARACARA",
+    "objeto": "X FESTIVAL FOLCLÓRICO DE CARACARAÍ",
+    "vigência_inicial": "2019-11-14",
+    "vigência_final": "2019-11-30",
+    "valor_concedente": 30000,
+    "contrapartida_proponente": 600,
+    "valor_total": 30000,
+    "valor_repassado": 0,
+    "saldo_a_repassar": 30000,
+    "situação": "PC PENDENTE"
+  }
+]
