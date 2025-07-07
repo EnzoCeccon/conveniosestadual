@@ -34,7 +34,7 @@ function listarArquivosJson(dir, arquivos = []) {
   return arquivos;
 }
 
-// Rota para retornar todos os dados dos arquivos JSON
+// Rota para retornar todos os dados dos arquivos JSO
 app.get('/api/convenios', (req, res) => {
   const arquivosJson = listarArquivosJson(path.join(__dirname, '../public/data'));
   console.log('Arquivos JSON encontrados:', arquivosJson);

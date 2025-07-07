@@ -932,5 +932,55 @@
     "valor_repassado": 650000.00,
     "saldo_a_repassar": 0.00,
     "situação": "Aprovado"
+  },
+  {
+    "numero_fomento": "02/2024",
+    "processo": "20101.005647/2024.82",
+    "concedente": "SESAU",
+    "proponente": "INSTITUTO DE DESENVOLVIMENTO HUMANO E SOCIAL",
+    "termo": "1º TA - VIGÊNCIA E VALOR (14738682)",
+    "objeto": "apoiar o Projeto Sorriso Bonito",
+    "vigência_inicial": "2024-04-06",
+    "vigência_final": "2025-01-02",
+    "valor_concedente": 1500000.00,
+    "contrapartida_proponente": 0.00,
+    "valor_total": 1500000.00,
+    "valor_repassado": 1200000.00,
+    "saldo_a_repassar": 300000.00,
+    "situação": "Parcialmente executado"
+  },
+  {
+    "numero_fomento": "05/2024",
+    "processo": "34101.000501/2024.55",
+    "concedente": "SECULT",
+    "proponente": "CTG NOVA QUERÊNCIA",
+    "termo": "1º TA (13584014) - VIGÊNCIA",
+    "objeto": "Projeto Difusão Cultural com a Reforma do Salão de Eventos Culturais do CTG",
+    "vigência_inicial": "2024-04-11",
+    "vigência_final": "2024-07-07",
+    "valor_concedente": 855963.00,
+    "contrapartida_proponente": 0.00,
+    "valor_total": 855963.00,
+    "valor_repassado": 855963.00,
+    "saldo_a_repassar": 0.00,
+    "situação": "Aprovado"
+  },
+  {
+    "numero_fomento": "08/2024",
+    "processo": "23101.001515/2024.70",
+    "concedente": "SETRABES",
+    "proponente": "INSTITUTO CONFIARR",
+    "termo": "1º TA (14580427) - REC. FINANC.",
+    "objeto": "Projeto Estação Juventude",
+    "vigência_inicial": "2024-04-18",
+    "vigência_final": "2025-01-24",
+    "valor_concedente": 1925963.00,
+    "contrapartida_proponente": 0.00,
+    "valor_total": 1925963.00,
+    "valor_repassado": 1533904.00,
+    "saldo_a_repassar": 392059.00,
+    "situação": "Parcialmente executado"
   }
-]
+]  
+  
+  

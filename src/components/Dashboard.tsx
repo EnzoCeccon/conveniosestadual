@@ -248,8 +248,11 @@ function Dashboard() {
     );
   });
 
+  // @ts-ignore
+  const API_URL = process.env.REACT_APP_API_URL || 'https://conveniosestadual.onrender.com/api/convenios';
+
   useEffect(() => {
-    axios.get('http://localhost:3001/api/convenios')
+    axios.get(API_URL)
       .then(res => {
         setDados(res.data);
         console.log('Dados recebidos da API:', res.data);
