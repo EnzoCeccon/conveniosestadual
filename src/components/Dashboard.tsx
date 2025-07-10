@@ -249,9 +249,8 @@ function Dashboard() {
   });
 
   // @ts-ignore
-  const API_URL = process.env.REACT_APP_API_URL || 'https://conveniosestadual.onrender.com/api/convenios';
+  const API_URL = process.env.REACT_APP_API_URL ||  'https://conveniosestadual-production.up.railway.app/api/convenios';
 
-  useEffect(() => {
     axios.get(API_URL)
       .then(res => {
         setDados(res.data);
