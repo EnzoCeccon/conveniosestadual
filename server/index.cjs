@@ -5,7 +5,9 @@ const fs = require('fs');
 const XLSX = require('xlsx');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://conveniosestadual-i6uy.vercel.app'
+}));
 const PORT = 3001; // Porta do backend
 
 // Função recursiva para listar todos os arquivos Excel em subpastas
@@ -56,6 +58,7 @@ app.get('/api/convenios', (req, res) => {
 // Servir arquivos estáticos do frontend normalmente
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.listen(PORT, () => {
-  console.log(`Servidor backend rodando em http://localhost:${PORT}`);
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Servidor backend rodando em http://localhost:${port}`);
 }); 
