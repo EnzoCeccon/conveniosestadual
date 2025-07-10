@@ -249,8 +249,9 @@ function Dashboard() {
   });
 
   // @ts-ignore
-  const API_URL = process.env.REACT_APP_API_URL ||  'https://conveniosestadual-production.up.railway.app/api/convenios';
+  const API_URL = process.env.REACT_APP_API_URL || 'https://conveniosestadual-production.up.railway.app/api/convenios';
 
+  useEffect(() => {
     axios.get(API_URL)
       .then(res => {
         setDados(res.data);
@@ -487,7 +488,7 @@ function Dashboard() {
                   <Typography><b>Número:</b> {convenioSelecionado.numero_convênio || convenioSelecionado.NUMERO || convenioSelecionado.numero || '---'}</Typography>
                   <Typography><b>Proponente:</b> {convenioSelecionado.proponente || convenioSelecionado.PROPONENTE || '---'}</Typography>
                   <Typography><b>Município:</b> {convenioSelecionado.municipio || convenioSelecionado.município || convenioSelecionado.Município || '---'}</Typography>
-                  <Typography><b>Concedente:</b> {convenioSelecionado.concedente || convenioSelecionado['órgão'] || convenioSelecionado.CONCEDENTE || '---'}</Typography>
+                  <Typography><b>Concedente:</b> {convenioSelecionado?.concedente || convenioSelecionado?.['órgão'] || convenioSelecionado?.CONCEDENTE || '---'}</Typography>
                   <Typography><b>Objeto:</b> {convenioSelecionado.objeto || convenioSelecionado.OBJETO || '---'}</Typography>
                   <Typography><b>Valor:</b> {convenioSelecionado.valor_total || convenioSelecionado.valor || convenioSelecionado.VALOR || convenioSelecionado.VALOR_TOTAL || '---'}</Typography>
                   <Typography><b>Área:</b> {convenioSelecionado.area || convenioSelecionado['área'] || convenioSelecionado['area_macro'] || '---'}</Typography>
