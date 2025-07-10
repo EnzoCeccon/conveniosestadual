@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Uni Neue';
-  src: url('/fonts/UniNeue-Regular.woff2') format('woff2'),
-       url('/fonts/UniNeue-Regular.woff') format('woff');
+  src: url('/fonts/UniNeue-Trial-Black.woff2') format('woff2'),
+       url('/fonts/UniNeue-Trial-Black.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
