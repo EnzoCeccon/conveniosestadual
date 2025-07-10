@@ -6,7 +6,7 @@ const XLSX = require('xlsx');
 
 const app = express();
 app.use(cors({
-  origin: 'https://conveniosestadual-i6uy.vercel.app'
+  origin: 'https://conveniosestadual.vercel.app'
 }));
 const PORT = 3001; // Porta do backend
 
