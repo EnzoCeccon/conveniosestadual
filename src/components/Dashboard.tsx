@@ -249,7 +249,7 @@ function Dashboard() {
   });
 
   // @ts-ignore
-  const API_URL = process.env.REACT_APP_API_URL || 'https://conveniosestadual-production.up.railway.app/api/convenios';
+  const API_URL = process.env.REACT_APP_API_URL || 'https://us-central1-painel-de-conve.cloudfunctions.net/api/api/convenios';
 
   useEffect(() => {
     axios.get(API_URL)
