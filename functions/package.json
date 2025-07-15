@@ -1,0 +1,13 @@
+{
+  "name": "functions",
+  "description": "Funções do Firebase para o painel de convênios",
+  "main": "index.js",
+  "engines": {
+    "node": ">=14"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "firebase-functions": "^4.4.1"
+  }
+} 
