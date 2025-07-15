@@ -5,9 +5,7 @@ const fs = require('fs');
 const XLSX = require('xlsx');
 
 const app = express();
-app.use(cors({
-  origin: 'https://conveniosestadual.vercel.app'
-}));
+app.use(cors());
 const PORT = 3001; // Porta do backend
 
 // Função recursiva para listar todos os arquivos Excel em subpastas
