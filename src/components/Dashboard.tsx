@@ -411,7 +411,7 @@ function Dashboard() {
               <TableHead>
                 <TableRow>
                   <TableCell><b>NÚMERO</b></TableCell>
-                  <TableCell><b>MUNICÍPIO</b></TableCell>
+                  <TableCell><b>MUNICÍPIO / PROPONENTE / CONCEDENTE</b></TableCell>
                   <TableCell><b>OBJETO</b></TableCell>
                   <TableCell><b>VALOR (R$)</b></TableCell>
                   <TableCell><b>VIGÊNCIA</b></TableCell>
