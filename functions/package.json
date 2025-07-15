@@ -3,7 +3,7 @@
   "description": "Funções do Firebase para o painel de convênios",
   "main": "index.js",
   "engines": {
-    "node": ">=14"
+    "node": "18"
   },
   "dependencies": {
     "express": "^4.18.2",
