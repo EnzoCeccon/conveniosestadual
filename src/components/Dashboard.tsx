@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Box, Paper, Typography, Grid, Select, MenuItem, Button, CircularProgress, Dialog, DialogTitle, DialogContent, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Modal, InputLabel, FormControl, Fade, Grow, Skeleton, Zoom } from '@mui/material';
 import { ResponsiveLine } from '@nivo/line';
@@ -19,6 +20,7 @@ import PrincipaisConveniosCard from './PrincipaisConveniosCard';
 import TablePagination from '@mui/material/TablePagination';
 import ResumoDonutsCard from './ResumoDonutsCard';
 import { useSpring, animated } from '@react-spring/web';
+import Autocomplete from '@mui/material/Autocomplete';
 
 // Dados de exemplo para Convênios Estaduais
 const execucaoMensal = [
@@ -73,27 +75,27 @@ export function DashboardHeader({
       </Typography>
       <Box display="flex" gap={2} alignItems="center" mb={3}>
         {/* Filtro por Ano (EXERCÍCIO) */}
-        <FormControl sx={{ minWidth: 120 }} size="small">
-          <InputLabel>Ano</InputLabel>
-          <Select
-            value={anos.includes(ano) ? ano : ''}
-            label="Ano"
-            onChange={e => setAno(e.target.value)}
-          >
-            {anos.map(a => <MenuItem key={a} value={a}>{a}</MenuItem>)}
-          </Select>
-        </FormControl>
+        <Autocomplete
+          freeSolo
+          options={anos}
+          value={ano}
+          onInputChange={(event, newInputValue) => setAno(newInputValue || '')}
+          renderInput={(params) => (
+            <TextField {...params} label="Ano" size="small" />
+          )}
+          sx={{ minWidth: 120 }}
+        />
         {/* Filtro por Status */}
-        <FormControl sx={{ minWidth: 140 }} size="small">
-          <InputLabel>Status</InputLabel>
-          <Select
-            value={statusList.includes(status) ? status : ''}
-            label="Status"
-            onChange={e => setStatus(e.target.value)}
-          >
-            {statusList.map(s => <MenuItem key={s} value={s}>{s}</MenuItem>)}
-          </Select>
-        </FormControl>
+        <Autocomplete
+          freeSolo
+          options={statusList}
+          value={status}
+          onInputChange={(event, newInputValue) => setStatus(newInputValue || '')}
+          renderInput={(params) => (
+            <TextField {...params} label="Status" size="small" />
+          )}
+          sx={{ minWidth: 140 }}
+        />
       </Box>
       <Box display="flex" gap={2} alignItems="center" mb={3}>
         {/* Filtro por Município */}
@@ -193,10 +195,17 @@ function Dashboard() {
   const regioes = ['Todas', ...Array.from(new Set(dados.map(d => d.Região))).filter(Boolean)];
   const statusList = ['Todos', ...Array.from(new Set(dados.map(d => d.Status))).filter(Boolean)];
 
+  // Corrigir o filtro dos dados para aceitar valores vazios
   const dadosFiltrados = dados.filter(d =>
-    (ano === '' || ano === 'Todos' || d['EXERCÍCIO'] === ano) &&
-    (municipio === '' || municipio === 'Todos' || d['Município'] === municipio) &&
-    (proponente === '' || proponente === 'Todos' || d['PROPONENTE'] === proponente) &&
+    (!ano || ano === 'Todos' ||
+      d['EXERCÍCIO'] === ano ||
+      (d['numero_convênio'] && d['numero_convênio'].toString().includes(ano)) ||
+      (d['NUMERO'] && d['NUMERO'].toString().includes(ano)) ||
+      (d['numero'] && d['numero'].toString().includes(ano))
+    ) &&
+    (!municipio || municipio === 'Todos' || d['Município'] === municipio) &&
+    (!proponente || proponente === 'Todos' || d['PROPONENTE'] === proponente) &&
+    (!status || status === 'Todos' || d['Status'] === status) &&
     (busca === '' || (d['OBJETO'] && d['OBJETO'].toLowerCase().includes(busca.toLowerCase())))
   );
 
@@ -206,7 +215,18 @@ function Dashboard() {
     ? (dadosFiltrados.filter(d => d.situação && d.situação.toLowerCase().includes('aprovado')).length / dadosFiltrados.length) * 100
     : 0;
   const prazoMedio = dadosFiltrados.length
-    ? Math.round(dadosFiltrados.reduce((acc, curr) => acc + (curr.prazo_meses || 0), 0) / dadosFiltrados.length)
+    ? Math.round(
+        dadosFiltrados.reduce((acc, curr) => {
+          const inicio = new Date(curr.vigencia_inicial || curr.vigência_inicial || curr.data_inicio || curr['Data Início'] || curr['VIGÊNCIA INICIAL']);
+          const fim = new Date(curr.vigencia_final || curr.vigência_final || curr.data_fim || curr['Data Fim'] || curr['VIGÊNCIA FINAL']);
+          if (!isNaN(inicio.getTime()) && !isNaN(fim.getTime())) {
+            // diferença em meses
+            const diffMeses = (fim.getFullYear() - inicio.getFullYear()) * 12 + (fim.getMonth() - inicio.getMonth());
+            return acc + diffMeses;
+          }
+          return acc;
+        }, 0) / dadosFiltrados.length
+      )
     : 0;
 
   // Dados para gráficos
@@ -246,6 +266,28 @@ function Dashboard() {
       municipio.includes(termo) ||
       objeto.includes(termo)
     );
+  });
+
+  // Ordenar conveniosRecentesFiltrados em ordem decrescente pelo campo 'numero_convênio' ou 'NUMERO' ou 'data' se existir
+  const conveniosRecentesFiltradosOrdenados = [...conveniosRecentesFiltrados].sort((a, b) => {
+    // Extrai o ano do número do convênio (ex: 001/2025 ou 001-2025)
+    const getAno = (row) => {
+      const num = row.numero_convênio || row.NUMERO || row.numero || '';
+      const match = num.match(/(\d{4})$/);
+      return match ? parseInt(match[1], 10) : 0;
+    };
+    const anoA = getAno(a);
+    const anoB = getAno(b);
+    if (anoA !== anoB) {
+      return anoB - anoA; // ordem decrescente de ano
+    }
+    // Se o ano for igual, ordena pelo número (parte antes da barra)
+    const getNum = (row) => {
+      const num = row.numero_convênio || row.NUMERO || row.numero || '';
+      const match = num.match(/^(\d+)/);
+      return match ? parseInt(match[1], 10) : 0;
+    };
+    return getNum(b) - getNum(a);
   });
 
   // @ts-ignore
@@ -406,6 +448,13 @@ function Dashboard() {
               setPagina(0);
             }}
           />
+          <Button
+            variant="outlined"
+            onClick={() => exportarCSV(conveniosRecentesFiltradosOrdenados)}
+            sx={{ mb: 2 }}
+          >
+            Exportar dados filtrados (CSV)
+          </Button>
           <TableContainer>
             <Table>
               <TableHead>
@@ -420,8 +469,8 @@ function Dashboard() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {conveniosRecentesFiltrados.length > 0 ? (
-                  conveniosRecentesFiltrados
+                {conveniosRecentesFiltradosOrdenados.length > 0 ? (
+                  conveniosRecentesFiltradosOrdenados
                     .slice(pagina * linhasPorPagina, pagina * linhasPorPagina + linhasPorPagina)
                     .map((row, idx) => (
                       <TableRow key={row['numero_convênio'] || row['NUMERO'] || idx} sx={{ transition: 'background 0.2s', '&:hover': { background: '#e3eaf7' } }}>
@@ -446,7 +495,7 @@ function Dashboard() {
           </TableContainer>
           <TablePagination
             component="div"
-            count={conveniosRecentesFiltrados.length}
+            count={conveniosRecentesFiltradosOrdenados.length}
             page={pagina}
             onPageChange={(event, newPage) => setPagina(newPage)}
             rowsPerPage={linhasPorPagina}
@@ -485,20 +534,20 @@ function Dashboard() {
                   Detalhes do Convênio
                 </Typography>
                 <Box display="flex" flexDirection="column" gap={1} mb={2}>
-                  <Typography><b>Número:</b> {convenioSelecionado.numero_convênio || convenioSelecionado.NUMERO || convenioSelecionado.numero || '---'}</Typography>
-                  <Typography><b>Proponente:</b> {convenioSelecionado.proponente || convenioSelecionado.PROPONENTE || '---'}</Typography>
-                  <Typography><b>Município:</b> {convenioSelecionado.municipio || convenioSelecionado.município || convenioSelecionado.Município || '---'}</Typography>
+                  <Typography><b>Número:</b> {convenioSelecionado?.numero_convênio || convenioSelecionado?.NUMERO || convenioSelecionado?.numero || '---'}</Typography>
+                  <Typography><b>Proponente:</b> {convenioSelecionado?.proponente || convenioSelecionado?.PROPONENTE || '---'}</Typography>
+                  <Typography><b>Município:</b> {convenioSelecionado?.municipio || convenioSelecionado?.município || convenioSelecionado?.Município || '---'}</Typography>
                   <Typography><b>Concedente:</b> {convenioSelecionado?.concedente || convenioSelecionado?.['órgão'] || convenioSelecionado?.CONCEDENTE || '---'}</Typography>
-                  <Typography><b>Objeto:</b> {convenioSelecionado.objeto || convenioSelecionado.OBJETO || '---'}</Typography>
-                  <Typography><b>Valor:</b> {convenioSelecionado.valor_total || convenioSelecionado.valor || convenioSelecionado.VALOR || convenioSelecionado.VALOR_TOTAL || '---'}</Typography>
-                  <Typography><b>Área:</b> {convenioSelecionado.area || convenioSelecionado['área'] || convenioSelecionado['area_macro'] || '---'}</Typography>
-                  <Typography><b>Vigência:</b> {convenioSelecionado.vigencia || convenioSelecionado.vigência || convenioSelecionado.vigência_inicial || convenioSelecionado.vigência_final || '---'}</Typography>
-                  <Typography><b>Situação/Status:</b> {convenioSelecionado.situacao || convenioSelecionado.situação || convenioSelecionado.status || convenioSelecionado.STATUS || '---'}</Typography>
-                  {convenioSelecionado.data_assinatura && (
-                    <Typography><b>Data de Assinatura:</b> {convenioSelecionado.data_assinatura}</Typography>
+                  <Typography><b>Objeto:</b> {convenioSelecionado?.objeto || convenioSelecionado?.OBJETO || '---'}</Typography>
+                  <Typography><b>Valor:</b> {convenioSelecionado?.valor_total || convenioSelecionado?.valor || convenioSelecionado?.VALOR || convenioSelecionado?.VALOR_TOTAL || '---'}</Typography>
+                  <Typography><b>Área:</b> {convenioSelecionado?.area || convenioSelecionado?.['área'] || convenioSelecionado?.['area_macro'] || '---'}</Typography>
+                  <Typography><b>Vigência:</b> {convenioSelecionado?.vigencia || convenioSelecionado?.vigência || convenioSelecionado?.vigência_inicial || convenioSelecionado?.vigência_final || '---'}</Typography>
+                  <Typography><b>Situação/Status:</b> {convenioSelecionado?.situacao || convenioSelecionado?.situação || convenioSelecionado?.status || convenioSelecionado?.STATUS || '---'}</Typography>
+                  {convenioSelecionado?.data_assinatura && (
+                    <Typography><b>Data de Assinatura:</b> {convenioSelecionado?.data_assinatura}</Typography>
                   )}
-                  {convenioSelecionado.data_publicacao && (
-                    <Typography><b>Data de Publicação:</b> {convenioSelecionado.data_publicacao}</Typography>
+                  {convenioSelecionado?.data_publicacao && (
+                    <Typography><b>Data de Publicação:</b> {convenioSelecionado?.data_publicacao}</Typography>
                   )}
                 </Box>
                 <Typography variant="subtitle1" mt={2} mb={1}>Cronograma de Desembolso</Typography>
@@ -513,18 +562,18 @@ function Dashboard() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {(convenioSelecionado.cronograma || []).map((parcela: any, idx: number) => (
+                      {(convenioSelecionado?.cronograma || []).map((parcela, idx) => (
                         <TableRow key={idx}>
-                          <TableCell>{parcela.parcela}</TableCell>
-                          <TableCell>{parcela.data}</TableCell>
-                          <TableCell>{parcela.valor}</TableCell>
+                          <TableCell>{parcela?.parcela}</TableCell>
+                          <TableCell>{parcela?.data}</TableCell>
+                          <TableCell>{parcela?.valor}</TableCell>
                           <TableCell>
                             <Chip
-                              label={parcela.status}
+                              label={parcela?.status}
                               color={
-                                parcela.status === 'Liberado' ? 'success' :
-                                parcela.status === 'Em análise' ? 'warning' :
-                                parcela.status === 'Pendente' ? 'default' : 'info'
+                                parcela?.status === 'Liberado' ? 'success' :
+                                parcela?.status === 'Em análise' ? 'warning' :
+                                parcela?.status === 'Pendente' ? 'default' : 'info'
                               }
                               size="small"
                             />
@@ -535,7 +584,6 @@ function Dashboard() {
                   </Table>
                 </TableContainer>
                 <Box display="flex" justifyContent="flex-end" gap={1}>
-                  <Button variant="outlined" color="primary" /* onClick={exportarPDF} */>Exportar PDF</Button>
                   <Button variant="outlined" onClick={handleCloseModal}>Fechar</Button>
                 </Box>
               </>

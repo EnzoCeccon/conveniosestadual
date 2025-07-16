@@ -34,7 +34,14 @@ function classificarArea(objeto) {
 }
 
 export default function ResumoDonutsCard({ dados }) {
-  const porSecretaria = agruparPorCampo(dados, 'concedente' in dados[0] ? 'concedente' : 'órgão');
+  let porSecretaria: any[] = [];
+  if (Array.isArray(dados) && dados.length > 0) {
+    if (dados[0] && typeof dados[0] === 'object' && 'concedente' in dados[0]) {
+      porSecretaria = agruparPorCampo(dados, 'concedente');
+    } else if (dados[0] && typeof dados[0] === 'object' && 'órgão' in dados[0]) {
+      porSecretaria = agruparPorCampo(dados, 'órgão');
+    }
+  }
   // Novo agrupamento: mapeia cada objeto para área macro
   const dadosComArea = dados.map(d => ({ ...d, area_macro: classificarArea(d.objeto) }));
   const porArea = agruparPorCampo(dadosComArea, 'area_macro');
