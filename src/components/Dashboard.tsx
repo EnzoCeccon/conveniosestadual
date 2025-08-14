@@ -21,6 +21,8 @@ import TablePagination from '@mui/material/TablePagination';
 import ResumoDonutsCard from './ResumoDonutsCard';
 import { useSpring, animated } from '@react-spring/web';
 import Autocomplete from '@mui/material/Autocomplete';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 // Dados de exemplo para Convênios Estaduais
 const execucaoMensal = [
@@ -63,7 +65,7 @@ function exportarCSV(dados) {
 }
 
 export function DashboardHeader({
-  ano, setAno, regiao, setRegiao, status, setStatus, onAtualizar, anos, regioes, statusList
+  ano, setAno, regiao, setRegiao, status, setStatus, onAtualizar, anos, regioes, statusList, onCriarRelatorio
 }: any) {
   return (
     <Box sx={{ background: '#e9effc', borderRadius: 3, p: 3, mb: 3 }}>
@@ -134,6 +136,21 @@ export function DashboardHeader({
         >
           Atualizar Dados
         </Button>
+        <Button
+          variant="contained"
+          sx={{
+            height: 56,
+            fontWeight: 700,
+            backgroundColor: '#0d47a1',
+            color: '#fff',
+            '&:hover': {
+              backgroundColor: '#08306b',
+            },
+          }}
+          onClick={onCriarRelatorio}
+        >
+          Criar Relatório
+        </Button>
       </Box>
     </Box>
   );
@@ -190,6 +207,7 @@ function Dashboard() {
   const [filtros, setFiltros] = useState({ ano: 'Todos', regiao: 'Todas', status: 'Todos', busca: '' });
   const [pagina, setPagina] = useState(0);
   const [linhasPorPagina, setLinhasPorPagina] = useState(4);
+  const [modalRelatorioAberto, setModalRelatorioAberto] = useState(false);
 
   // Dentro do componente Dashboard
   const regioes = ['Todas', ...Array.from(new Set(dados.map(d => d.Região))).filter(Boolean)];
@@ -353,6 +371,49 @@ function Dashboard() {
     });
   };
 
+  const gerarRelatorioPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text('Resumo dos Convênios', 14, 20);
+    doc.setFontSize(12);
+    doc.text(`Valor Total: ${formatValor(valorTotal)}`, 14, 35);
+    doc.text(`Taxa de Execução: ${taxaExecucao.toFixed(1)}%`, 14, 45);
+    doc.text(`Prazo Médio: ${prazoMedio} meses`, 14, 55);
+    doc.save('relatorio_convenios.pdf');
+  };
+
+  const gerarRelatorioPDFVisual = async () => {
+    // Esconde o modal antes de capturar
+    const modal = document.querySelector('[aria-labelledby="modal-relatorio-title"]');
+    if (modal) {
+      (modal as HTMLElement).style.display = 'none';
+    }
+    // Aguarda o DOM atualizar
+    await new Promise(r => setTimeout(r, 200));
+    const dashboardElement = document.body; // captura a página inteira
+    const canvas = await html2canvas(dashboardElement, { useCORS: true, scale: 2 });
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: 'a4' });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pageWidth;
+    const imgHeight = canvas.height * (pageWidth / canvas.width);
+    let position = 0;
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    let remainingHeight = imgHeight - pageHeight;
+    while (remainingHeight > 0) {
+      position = position - pageHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      remainingHeight -= pageHeight;
+    }
+    // Reexibe o modal
+    if (modal) {
+      (modal as HTMLElement).style.display = '';
+    }
+    pdf.save('relatorio_visual_dashboard.pdf');
+  };
+
   if (loading) return <CircularProgress />;
 
   return (
@@ -369,6 +430,7 @@ function Dashboard() {
           anos={anos}
           regioes={regioes}
           statusList={statusList}
+          onCriarRelatorio={() => setModalRelatorioAberto(true)}
         />
 
         <Grid container spacing={2} mb={3}>
@@ -588,6 +650,41 @@ function Dashboard() {
                 </Box>
               </>
             )}
+          </Box>
+        </Modal>
+
+        <Modal
+          open={modalRelatorioAberto}
+          onClose={() => setModalRelatorioAberto(false)}
+          aria-labelledby="modal-relatorio-title"
+          aria-describedby="modal-relatorio-description"
+        >
+          <Box sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            borderRadius: 3,
+            boxShadow: 24,
+            p: 4,
+            outline: 'none',
+          }}>
+            <Typography id="modal-relatorio-title" variant="h6" component="h2" mb={2}>
+              Criar Relatório
+            </Typography>
+            <Typography id="modal-relatorio-description" sx={{ mb: 2 }}>
+              Clique no botão abaixo para baixar um PDF com o resumo dos dados filtrados.
+            </Typography>
+            <Box display="flex" justifyContent="flex-end" gap={1}>
+              <Button variant="contained" onClick={gerarRelatorioPDFVisual} sx={{ backgroundColor: '#0d47a1', color: '#fff', '&:hover': { backgroundColor: '#08306b' } }}>
+                Baixar PDF Visual
+              </Button>
+              <Button variant="outlined" onClick={() => setModalRelatorioAberto(false)}>
+                Fechar
+              </Button>
+            </Box>
           </Box>
         </Modal>
       </Box>
